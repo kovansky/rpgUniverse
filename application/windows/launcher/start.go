@@ -11,15 +11,21 @@ var (
 )
 
 func RunStart() {
-	window = widgets.NewQMainWindow(nil, core.Qt__Window)
+	window = widgets.NewQMainWindow(nil, 0)
 	window.SetWindowTitle(application.Language.App.Title)
 	window.SetAutoFillBackground(true)
 	window.SetPalette(application.Palettes.WindowPalette)
-	window.SetGeometry2(0, 0, 200, 100)
+	window.SetGeometry2(0, 0, 300, 800)
 
-	helloLabel := widgets.NewQLabel2(application.Language.App.Title, window, core.Qt__Widget)
-	helloLabel.SetPalette(application.Palettes.MainPalette)
+	area := widgets.NewQWidget(window, core.Qt__Widget)
 
+	titleLabel := widgets.NewQLabel2(application.Language.App.Title, area, core.Qt__Widget)
+	titleLabel.SetPalette(application.Palettes.MainPalette)
+
+	layout := widgets.NewQVBoxLayout2(area)
+	layout.AddWidget(titleLabel, 0, core.Qt__AlignTop)
+
+	area.SetLayout(layout)
+	window.SetCentralWidget(area)
 	window.Show()
-	helloLabel.Show()
 }
