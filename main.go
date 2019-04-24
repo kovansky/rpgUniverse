@@ -1,19 +1,45 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
+	"github.com/kovansky/rpgUniverse/application/schemas/settings"
 	"github.com/kovansky/rpgUniverse/application/visual"
 	"github.com/therecipe/qt/core"
 	"github.com/therecipe/qt/widgets"
+	"io/ioutil"
 	"os"
 )
 
 var (
+	config *settings.Config
+
 	app    *widgets.QApplication
 	window *widgets.QMainWindow
 
 	palettes = visual.NewPalettes()
 )
+
+/*
+Open config file
+*/
+func init() {
+	configFile, err := os.Open("settings/config.json")
+
+	if err != nil {
+		panic(err)
+	}
+
+	byteValue, _ := ioutil.ReadAll(configFile)
+
+	err = json.Unmarshal(byteValue, &config)
+
+	if err != nil {
+		panic(err)
+	}
+
+	defer configFile.Close()
+}
 
 func main() {
 	fmt.Println("Running application")
