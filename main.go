@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/kovansky/rpgUniverse/application/schemas/languages"
 	"github.com/kovansky/rpgUniverse/application/schemas/settings"
 	"github.com/kovansky/rpgUniverse/application/visual"
 	"github.com/therecipe/qt/core"
@@ -12,7 +13,8 @@ import (
 )
 
 var (
-	config *settings.Config
+	Config   *settings.Config
+	Language *languages.Language
 
 	app    *widgets.QApplication
 	window *widgets.QMainWindow
@@ -32,7 +34,7 @@ func init() {
 
 	byteValue, _ := ioutil.ReadAll(configFile)
 
-	err = json.Unmarshal(byteValue, &config)
+	err = json.Unmarshal(byteValue, &Config)
 
 	if err != nil {
 		panic(err)
@@ -41,18 +43,39 @@ func init() {
 	defer configFile.Close()
 }
 
+/*
+Open language file
+*/
+func init() {
+	languageFile, err := os.Open("settings/languages/" + Config.General.Language + ".json")
+
+	if err != nil {
+		panic(err)
+	}
+
+	byteValue, _ := ioutil.ReadAll(languageFile)
+
+	err = json.Unmarshal(byteValue, &Language)
+
+	if err != nil {
+		panic(err)
+	}
+
+	defer languageFile.Close()
+}
+
 func main() {
 	fmt.Println("Running application")
 
 	app = widgets.NewQApplication(len(os.Args), os.Args)
 
 	window = widgets.NewQMainWindow(nil, core.Qt__Window)
-	window.SetWindowTitle("Hello, world!")
+	window.SetWindowTitle(Language.App.Title)
 	window.SetAutoFillBackground(true)
 	window.SetPalette(palettes.WindowPalette)
 	window.SetGeometry2(0, 0, 200, 100)
 
-	helloLabel := widgets.NewQLabel2("Hello, world", window, core.Qt__Widget)
+	helloLabel := widgets.NewQLabel2(Language.App.Title, window, core.Qt__Widget)
 	helloLabel.SetPalette(palettes.MainPalette)
 
 	window.Show()
